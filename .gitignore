@@ -1,0 +1,20 @@
+# IDEs and environments
+venv/
+.venv/
+env/
+.vscode/
+
+# Python caching
+__pycache__/
+*.py[cod]
+*~
+
+# Data (Too large for GitHub)
+data/*.csv
+
+# Models (Too large for standard GitHub without Git LFS)
+models/*.pt
+
+# OS specific
+.DS_Store
+Thumbs.db

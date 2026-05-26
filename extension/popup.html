@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detect_IT</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Neutral grey background to let the sage boxes pop */
+    body {
+      width: 400px;
+      min-height: 200px;
+      background: #cfd4d1;
+      color: #1f3328;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      font-size: 14px;
+      padding: 24px 20px;
+    }
+
+    /* ── Common Solid 3D Style exactly like the reference ── */
+    .sage-box {
+      background: #8aa096;
+      /* Base sage green */
+      border-radius: 16px;
+      box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.4),
+        /* Top inner highlight */
+        0 6px 0 #617a6f,
+        /* Solid 3D bottom edge */
+        0 14px 16px rgba(0, 0, 0, 0.15);
+      /* Soft drop shadow */
+      padding: 18px 20px;
+      color: #1f3328;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+    }
+
+    .header-icon {
+      font-size: 2.2em;
+      line-height: 1;
+      text-shadow: 0 2px 4px rgba(255, 255, 255, 0.4);
+    }
+
+    .header-texts {
+      flex-grow: 1;
+    }
+
+    .header-title {
+      font-size: 1.35em;
+      font-weight: 800;
+      color: #11261d;
+      letter-spacing: 0.5px;
+    }
+
+    .header-sub {
+      font-size: 0.85em;
+      color: #2a4034;
+      margin-top: 3px;
+      font-weight: 700;
+    }
+
+    /* ── Body ── */
+    .body {
+      padding: 0;
+    }
+
+    /* ── Page info ── */
+    .page-info {
+      padding: 16px 20px;
+    }
+
+    .page-title {
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 6px;
+      font-size: 1.1em;
+      color: #11261d;
+    }
+
+    .page-url {
+      color: #2a4034;
+      font-size: 0.9em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+    }
+
+    /* ── Analyze button ── */
+    #analyze-btn {
+      width: 100%;
+      background: #8aa096;
+      color: #11261d;
+      font-weight: 900;
+      font-size: 1.15em;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.1s ease;
+      margin-bottom: 24px;
+    }
+
+    #analyze-btn:hover:not(:disabled) {
+      background: #92a89e;
+      color: #0c1a13;
+    }
+
+    #analyze-btn:active:not(:disabled) {
+      background: #8aa096;
+      transform: translateY(6px);
+      box-shadow:
+        inset 0 3px 6px rgba(0, 0, 0, 0.15),
+        0 0px 0 #617a6f,
+        0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    #analyze-btn:disabled {
+      background: #7c9188;
+      opacity: 0.8;
+      cursor: not-allowed;
+    }
+
+    /* ── Status / error ── */
+    #status {
+      font-size: 0.95em;
+      font-weight: 700;
+      color: #11261d;
+      text-align: center;
+      min-height: 20px;
+      margin-top: -8px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Spinner ── */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      border-top-color: #11261d;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 12px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ── Result card ── */
+    #result {
+      display: none;
+    }
+
+    .result-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .result-icon {
+      font-size: 2.8em;
+      line-height: 1;
+      text-shadow: 0 2px 4px rgba(255, 255, 255, 0.4);
+    }
+
+    .result-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 8px;
+      font-size: 1.3em;
+      font-weight: 900;
+      letter-spacing: 1px;
+      background: rgba(255, 255, 255, 0.4);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .result-badge.fake {
+      color: #7a0b0b;
+      background: rgba(255, 82, 82, 0.6);
+      border-color: rgba(255, 82, 82, 0.8);
+    }
+
+    .result-badge.real {
+      color: #0c4d22;
+      background: rgba(0, 200, 83, 0.5);
+      border-color: rgba(0, 200, 83, 0.8);
+    }
+
+    .result-verdict {
+      margin-top: 6px;
+      font-size: 0.9em;
+      font-weight: 700;
+      color: #11261d;
+    }
+
+    /* ── Confidence bar ── */
+    .bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85em;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #11261d;
+    }
+
+    .bar-track {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 999px;
+      height: 16px;
+      display: flex;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      padding: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .bar-real,
+    .bar-fake {
+      height: 100%;
+      transition: width 0.6s ease;
+      border-radius: 999px;
+    }
+
+    .bar-real {
+      background: #00c853;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    }
+
+    .bar-fake {
+      background: #ff5252;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4);
+      margin-left: -4px;
+    }
+
+    /* ── Text excerpt ── */
+    .excerpt {
+      margin-top: 20px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.3);
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      font-size: 0.85em;
+      color: #1f3328;
+      line-height: 1.6;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .excerpt b {
+      color: #11261d;
+      font-weight: 900;
+    }
+
+    /* ── Footer note ── */
+    .footer-note {
+      margin-top: 16px;
+      font-size: 0.75em;
+      font-weight: 700;
+      color: #2a4034;
+      text-align: center;
+    }
+
+    /* ── Server offline warning ── */
+    .offline-card {
+      background: #d6874e;
+      box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.4),
+        0 6px 0 #a36130,
+        0 14px 16px rgba(0, 0, 0, 0.15);
+      color: #2e1704;
+    }
+
+    .offline-card b {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.1em;
+      color: #1a0c00;
+      font-weight: 900;
+    }
+
+    .offline-card code {
+      display: inline-block;
+      margin-top: 4px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.9em;
+      color: #2e1704;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+      font-weight: 800;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <div class="header sage-box">
+    <div class="header-icon">🛡️</div>
+    <div class="header-texts">
+      <div class="header-title">Detect_IT</div>
+      <div class="header-sub">BERT Fake News Verifier</div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- Page info -->
+    <div class="page-info sage-box">
+      <div class="page-title" id="page-title">Loading page info…</div>
+      <div class="page-url" id="page-url"></div>
+    </div>
+
+    <!-- Analyze button -->
+    <button id="analyze-btn" class="sage-box">🔍 Analyze Article</button>
+
+    <!-- Status -->
+    <div id="status"></div>
+
+    <!-- Offline warning -->
+    <div id="offline-card" class="offline-card sage-box" style="display:none">
+      <b>⚠️ Server Offline</b>
+      Start the BERT backend inside your terminal:<br />
+      <code>python server.py</code>
+    </div>
+
+    <!-- Result card -->
+    <div id="result">
+      <div class="result-card sage-box" id="result-card">
+        <div class="result-top">
+          <span class="result-icon" id="result-icon"></span>
+          <div>
+            <div class="result-badge" id="result-badge"></div>
+            <div class="result-verdict" id="result-verdict"></div>
+          </div>
+        </div>
+        <div class="bar-labels">
+          <span class="real-lbl" id="real-lbl">✅ REAL</span>
+          <span class="fake-lbl" id="fake-lbl">🚨 FAKE</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-real" id="bar-real" style="width:50%"></div>
+          <div class="bar-fake" id="bar-fake" style="width:50%"></div>
+        </div>
+        <div class="excerpt" id="excerpt"></div>
+        <div class="footer-note">Analyzed via neural classification network</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
