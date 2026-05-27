@@ -17,8 +17,8 @@ Since this project bridges Python Deep Learning and a Chrome extension, you need
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/your-username/detect_it.git
-   cd detect_it
+   git clone https://github.com/All-00k/Detect_it.git
+   cd Detect_it
    ```
 
 2. **Setup your Environment**
