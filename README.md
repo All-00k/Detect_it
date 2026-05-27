@@ -1,4 +1,4 @@
-# Detect_IT 🕵️‍♂️📰 [STILL IN PROGRESSSS...]
+# Detect_IT 🕵️‍♂️📰 [whole notebook: https://colab.research.google.com/drive/17cxBmfExWanLScVxiTu8JL850SScvo-o?usp=drive_link]
 
 **Detect_IT** is an intelligent browser companion and Machine Learning backend that actively scans news articles you read to detect and flag Fake News in real-time, utilizing fine-tuned NLP BERT classifications.
 
