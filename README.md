@@ -34,14 +34,18 @@ Since this project bridges Python Deep Learning and a Chrome extension, you need
    pip install -r requirements.txt
    ```
 
-4. **Prepare Model Weights (Optional if provided)**
+4. **Get Data from the Drive link to train model**
+   **Drive Link:** https://drive.google.com/drive/folders/1RTVRrzxAdqMfBUhCuE2dhNYiOCVJash0?usp=drive_link
+
+5. **Prepare Model Weights (Optional if provided)**
    If model weights `detect_it_weights.pt` are not bundled via Git LFS, you must train the model locally by placing `a1_True.csv` and `a2_Fake.csv` inside the `data/` folder and running:
    ```bash
    python train.py
    ```
    *Note: Using a machine with a dedicated GPU (CUDA) is highly recommended for retraining.*
 
-5. **Spin up the Server**
+   
+6. **Spin up the Server**
    Start the local Flask prediction server. This *must* be running continuously while the extension is active.
    ```bash
    python server.py
